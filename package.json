@@ -1,0 +1,16 @@
+{
+  "name": "caf_sharing",
+  "description": "Cloud Assistants lib for efficient sharing of data and code among CAs (single writer/ multiple reader) using the Sharing Actors paradigm",
+  "version": "0.0.1",
+  "author": "Antonio Lain <antlai@cafjs.com>",
+  "dependencies": {
+      "caf_core" : ">= 0.0.1"
+  },
+  "main": "index",
+    "homepage": "http://www.cafjs.com",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cafjs/caf_sharing.git"
+    },
+    "engines": { "node": ">= 0.8.1 " }
+}
