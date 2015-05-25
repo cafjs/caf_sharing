@@ -6,6 +6,9 @@ See http://www.cafjs.com
 
 ## CAF Lib Sharing
 
+[![Build Status](http://ci.cafjs.com/github.com/cafjs/caf_sharing/status.svg?branch=master)](http://ci.cafjs.com/github.com/cafjs/caf_sharing)
+
+
 This repository contains a CAF lib to implement distributed data structures needed by Sharing Actors.
 
 
@@ -18,62 +21,61 @@ This repository contains a CAF lib to implement distributed data structures need
 
 ### framework.json
 
-       "plugs": [
+       {
+            "name": "cp"
+        },
         {
-            "module" : "caf_sharing/plug",
-            "name" : "sharing_mux",
-            "description" : "Shared connection to a Sharing Maps service\n Properties: <spine> Spine service configuration data\n",
+            "name": "cp2",
+            "module" : "caf_redis#plug",
+            "description" : "Checkpointing service",
             "env" : {
-                "spine": {
-                   "persist" : {
-                     "service": {
-                       "hostname": "redis1.foo.com",
-                       "port": 6379,
-                       "password": "pleasechange"
-                     }                   
-                   },
-                   "route" : {
-                     "service": {
-                       "hostname": "redis2.foo.com",
-                       "port": 6379,
-                       "password": "pleasechange"
-                     }                   
-                   }                
+               "nodeId": "default",
+               "redis" : {
+                   "password" : null,
+                   "host" : "localhost",
+                   "port" : 6379
+                },
+                "coalescing" : {
+                    "interval" : 10,
+                    "maxPendingUpdates" : 20
                 }
             }
+        },
+        {
+            "name": "sharing",
+            "module": "caf_sharing#plug",
+            "description": "Sharing service",
+            "env" : {
+                "persistService" : "cp",
+                "routeService" : "cp2"
+            }
         }
+
         
-        
-If the property `spine` is **not defined** we use the default Redis server (used also for checkpointing) to implement both the `route` and `persist` services that are part of the `Spine`. **This is the recommended setting** because the Cloud Foundry plug-in gets the default (Redis) service  configuration transparently.
+We need a separate connection to the Redis backend to support concurrent pubsub +checkpointing.
         
 
 ### ca.json
-
-    "internal" : [
-      {
-            "module": "caf_sharing/plug_ca",
-            "name": "sharing_ca",
-            "description": "Provides a  service to create Sharing Maps visible to this CA",
-            "env" : {
-
-            }
-        }
-        ...
-     ]
-     "proxies" : [
-      {
-            "module": "caf_sharing/proxy",
+  
+        {
+            "module": "caf_sharing#plug_ca",
             "name": "sharing",
-            "description": "Proxy to access the Sharing Maps service",
+            "description": "Manages Shared Maps for a CA",
             "env" : {
+                "maxRetries" : "$._.env.maxRetries",
+                "retryDelay" : "$._.env.retryDelay"
+            },
+            "components" : [
+                {
+                    "module": "caf_sharing#proxy",
+                    "name": "proxy",
+                    "description": "Allows access to this CA Shared Maps",
+                    "env" : {
+                    }
+                }
+            ]
+        }
 
-            }
-        },
-        ...
-      ]
-  
-  
-    
         
             
  
