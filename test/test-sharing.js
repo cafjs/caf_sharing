@@ -112,7 +112,7 @@ module.exports = {
         m1.applyChanges(d2);
         ref1 = m1.ref();
         test.deepEqual(ref1.toObject(), ref2.toObject());
-        test.ok(ref1.toImmutableObject().equals(ref2.toImmutableObject()));
+        test.ok(m1.toImmutableObject(ref1).equals(m2.toImmutableObject(ref2)));
         test.equals(ref1.toObject()['x'], 6);
         test.ok(!ref1.has('z'));
         // apply again should be ignored
