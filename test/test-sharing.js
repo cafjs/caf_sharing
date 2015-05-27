@@ -1,3 +1,4 @@
+"use strict"
 var crypto = require('crypto');
 var SharedMap = require('../index').SharedMap;
 var hello = require('./hello/main.js');
@@ -51,7 +52,7 @@ module.exports = {
         }
     },
     sharedMap: function (test) {
-       test.expect(20);
+       test.expect(23);
 
         // test isolation
         var m1 = new SharedMap();
@@ -59,7 +60,11 @@ module.exports = {
         var ref2 = m1.ref(true);
         ref1.set('x', 1);
         ref1.set('z', 5);
-        ref1.set('y', {doo:'sss', p:3} );
+        var value = {doo:'sss', p:3};
+        ref1.set('y', value );
+        test.throws(function() {
+            value.p = 2; // frozen object
+        });
         ref1.set('x', 2);
         ref1.delete('z');
         var delta1 = ref1.prepare();
@@ -116,8 +121,16 @@ module.exports = {
         test.equals(ref1.toObject()['x'], 6);
         test.ok(!ref1.has('z'));
         // apply again should be ignored
-        ref1 = m1.ref();
+        ref1 = m1.ref(true);
+        // Only the last change uses applyChanges(), so there is no update for
+        //   the previous ones.
+        var up1 = ref1.updatesSlice(2);
         m1.applyChanges(d2);
+        ref1 = m1.ref(true);
+        var up2 = ref1.updatesSlice(2);
+        test.deepEqual(up1, up2);
+        console.log(up1);
+        test.equals(up1.length, 1);
         var ref11 = m1.ref();
         test.equals(ref1.getVersion(), ref11.getVersion());
         test.done();
