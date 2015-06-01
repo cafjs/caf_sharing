@@ -53,9 +53,7 @@ exports.methods = {
         try {
             var $$ = this.$.sharing.$;
             if (isFunction) {
-                var result;
-                eval('result = (function() { return ' + value + ';}) ()');
-                $$[alias].set(key, result);
+                $$[alias].setFun(key, value);
             } else {
                 $$[alias].set(key, value);
             }
