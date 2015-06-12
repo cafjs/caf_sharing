@@ -1,6 +1,7 @@
 "use strict"
 var crypto = require('crypto');
 var SharedMap = require('../index').SharedMap;
+var AggregateMap = require('../index').AggregateMap;
 var hello = require('./hello/main.js');
 var app = hello;
 var caf_core = require('caf_core');
@@ -326,7 +327,73 @@ module.exports = {
                         test.ifError(err);
                         test.done();
                     });
+    },
+    aggregateMap: function (test) {
+        test.expect(11);
+        var allMaps = {
+            p1 : new SharedMap(),
+            p2 : new SharedMap(),
+            p3 : new SharedMap(),
+            p4 : new SharedMap()
+        };
+        var findMap = function(name, cb) {
+            cb(null, allMaps[name]);
+        };
+
+        // links p1->p2, p1->p3, p2->p4, p4->p3, p4->p1
+        // bindings {p4, {a, b}} {p2, {c}}, {p1, {d}}, {p3, {d}}
+        var ref = allMaps.p1.ref();
+        ref.set('__link_key__', ['p2', 'p3']);
+        ref.set('d', true);
+        ref.prepare();
+        allMaps.p1.commit(ref);
+
+        ref = allMaps.p2.ref();
+        ref.set('__link_key__', ['p4']);
+        ref.set('c', true);
+        ref.prepare();
+        allMaps.p2.commit(ref);
+
+        ref = allMaps.p3.ref();
+        ref.set('d', true);
+        ref.prepare();
+        allMaps.p3.commit(ref);
+
+        ref = allMaps.p4.ref();
+        ref.set('__link_key__', ['p3','p1']);
+        ref.set('a', true);
+        ref.set('b', true);
+        ref.prepare();
+        allMaps.p4.commit(ref);
+
+        var aggMap = new  AggregateMap('p1', findMap, '__link_key__');
+
+        aggMap.assemble(function(err, aggRef) {
+            test.ifError(err);
+            test.equals(aggRef.getAll('a').length, 1);
+            test.ok(aggRef.getAll('a')[0]);
+            test.equals(aggRef.getAll('b').length, 1);
+            test.equals(aggRef.getAll('c').length, 1);
+            test.equals(aggRef.getAll('d').length, 2);
+            test.equals(aggRef.getAll('e').length, 0);
+            // unlink p2->p4 to isolate p4
+            ref = allMaps.p2.ref();
+            ref.set('__link_key__', []);
+            ref.prepare();
+            allMaps.p2.commit(ref);
+            aggMap.assemble(function(err, aggRef) {
+                test.ifError(err);
+                test.equals(aggRef.getAll('a').length, 0);
+                test.equals(aggRef.getAll('b').length, 0);
+                test.equals(aggRef.getAll('d').length, 2);
+                test.done();
+            });
+
+
+        });
+
+
+
+
     }
-
-
 };
