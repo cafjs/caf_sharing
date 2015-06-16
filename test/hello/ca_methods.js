@@ -36,11 +36,11 @@ exports.methods = {
         var $$ = this.$.sharing.$;
         cb(null, Object.keys($$));
     },
-    addMap: function(alias, mapName, readOnly, cb) {
+    addMap: function(alias, mapName, readOnly, options, cb) {
         if (readOnly) {
-            this.$.sharing.addReadOnlyMap(alias, mapName);
+            this.$.sharing.addReadOnlyMap(alias, mapName, options);
         } else {
-            this.$.sharing.addWritableMap(alias, mapName);
+            this.$.sharing.addWritableMap(alias, mapName, options);
         }
         cb(null);
     },
@@ -72,6 +72,21 @@ exports.methods = {
                 cb(err);
             } else {
                 cb(null, $$[alias].get(key));
+            }
+        } catch (error) {
+            cb(error);
+        }
+    },
+
+    getAll: function(alias, key, cb) {
+        try {
+            var $$ = this.$.sharing.$;
+            if (!$$[alias]) {
+                var err = new Error('Missing map');
+                err.alias = alias;
+                cb(err);
+            } else {
+                cb(null, $$[alias].getAll(key));
             }
         } catch (error) {
             cb(error);

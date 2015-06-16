@@ -233,7 +233,7 @@ module.exports = {
                         from : from1
                     });
                     s1.onopen = function() {
-                        s1.addMap('foo', map1, false, cb);
+                        s1.addMap('foo', map1, false, null, cb);
                     };
                 },
                 function(cb) {
@@ -241,7 +241,7 @@ module.exports = {
                         from : from2
                     });
                     s2.onopen = function() {
-                        s2.addMap('foo', map1Full, true, cb);
+                        s2.addMap('foo', map1Full, true, null, cb);
                     };
                 },
                 function(cb) {
@@ -249,7 +249,7 @@ module.exports = {
                         from : from3
                     });
                     s3.onopen = function() {
-                        s3.addMap('foo', map1Full, true, cb);
+                        s3.addMap('foo', map1Full, true, null, cb);
                     };
                 },
                 function(cb) {
@@ -392,5 +392,120 @@ module.exports = {
 
         });
 
+    },
+    oneAggregate: function(test) {
+        var self = this;
+        test.expect(12);
+        var s1;
+        var s2;
+        var s3;
+        var from1 = FROM_1;
+        var map1 = 'mytable'+ crypto.randomBytes(16).toString('hex');
+        console.log(map1);
+        var map1Full = FROM_1 + '-' + map1;
+        var map2 = 'mytable'+ crypto.randomBytes(16).toString('hex');
+        console.log(map2);
+        var map2Full = FROM_2 + '-' + map2;
+
+        var from2 = FROM_2;
+        var from3 = FROM_3;
+
+        async.series(
+            [
+                function(cb) {
+                    s1 = new cli.Session('ws://foo-xx.vcap.me:3000', from1, {
+                        from : from1
+                    });
+                    s1.onopen = function() {
+                        s1.addMap('foo', map1, false, null, cb);
+                    };
+                },
+                function(cb) {
+                    s2 = new cli.Session('ws://foo-xx.vcap.me:3000', from2, {
+                        from : from2
+                    });
+                    s2.onopen = function() {
+                        s2.addMap('bar', map2, false, null, cb);
+                    };
+                },
+                function(cb) {
+                    s3 = new cli.Session('ws://foo-xx.vcap.me:3000', from1, {
+                        from : from1
+                    });
+                    s3.onopen = function() {
+                        s3.addMap('fooAggregate', map1Full, true,
+                                  {isAggregate: true}, cb);
+                    };
+                },
+                function(cb) {
+                    s1.poke('foo', '__link_key__', [map2Full], false, cb);
+                },
+                function(cb) {
+                    s1.poke('foo', 'john', true, false, cb);
+                },
+                function(cb) {
+                    s2.poke('bar', 'helen', true, false, cb);
+                },
+                function(cb) {
+                    var cb1 = function(err, data) {
+                        test.ifError(err);
+                        test.deepEqual([true], data);
+                        cb(null);
+                    };
+                    s3.getAll('fooAggregate', 'helen', cb1);
+                },
+                function(cb) {
+                    var cb1 = function(err, data) {
+                        test.ifError(err);
+                        test.deepEqual([true], data);
+                        cb(null);
+                    };
+                    s3.getAll('fooAggregate', 'john', cb1);
+                },
+                function(cb) {
+                    var cb1 = function(err, data) {
+                        test.ifError(err);
+                        test.deepEqual([], data);
+                        cb(null);
+                    };
+                    s3.getAll('fooAggregate', 'nobody', cb1);
+                },
+                function(cb) {
+                    s1.poke('foo', '__link_key__', [], false, cb);
+                },
+                function(cb) {
+                    var cb1 = function(err, data) {
+                        test.ifError(err);
+                        test.deepEqual([], data);
+                        cb(null);
+                    };
+                    s3.getAll('fooAggregate', 'helen', cb1);
+                },
+
+                function(cb) {
+                    s1.onclose = function(err) {
+                        test.ifError(err);
+                        cb(null, null);
+                    };
+                    s1.close();
+                },
+                function(cb) {
+                    s2.onclose = function(err) {
+                        test.ifError(err);
+                        cb(null, null);
+                    };
+                    s2.close();
+                },
+                function(cb) {
+                    s3.onclose = function(err) {
+                        test.ifError(err);
+                        cb(null, null);
+                    };
+                    s3.close();
+                }
+            ], function(err, res) {
+                test.ifError(err);
+                test.done();
+            });
     }
 };

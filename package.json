@@ -1,7 +1,7 @@
 {
     "name": "caf_sharing",
     "description": "Cloud Assistants lib for efficient sharing of data and code among CAs using the Sharing Actors paradigm",
-    "version": "0.2.7",
+    "version": "0.2.8",
     "author": "Antonio Lain <antlai@cafjs.com>",
     "dependencies": {
         "caf_components" : "^0.2.0",
