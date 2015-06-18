@@ -11,6 +11,7 @@ See http://www.cafjs.com
 
 This repository contains a CAF lib to implement distributed data structures needed by Sharing Actors.
 
+Sharing Actors do not change the core semantics of normal actors but they can use shared-memory efficiently.
 
 ## API
 
