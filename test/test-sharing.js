@@ -449,6 +449,9 @@ module.exports = {
                     s2.poke('bar', 'helen', true, false, cb);
                 },
                 function(cb) {
+                    setTimeout(function() {cb(null);}, 2000);
+                },
+                function(cb) {
                     var cb1 = function(err, data) {
                         test.ifError(err);
                         test.deepEqual([true], data);
