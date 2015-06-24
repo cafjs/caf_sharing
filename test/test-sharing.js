@@ -52,7 +52,7 @@ module.exports = {
             this.$.top.__ca_graceful_shutdown__(null, cb);
         }
     },
-/*
+
     sharedMap: function (test) {
        test.expect(23);
 
@@ -394,7 +394,6 @@ module.exports = {
         });
 
     },
-*/
     oneAggregate: function(test) {
         var self = this;
         test.expect(12);
