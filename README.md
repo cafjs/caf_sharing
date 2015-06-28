@@ -13,6 +13,7 @@ This repository contains a CAF lib to implement distributed data structures need
 
 Sharing Actors do not change the core semantics of normal actors but they can use shared-memory efficiently.
 
+
 ## API
 
     lib/proxy_sharing.js
