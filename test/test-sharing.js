@@ -52,6 +52,7 @@ module.exports = {
             this.$.top.__ca_graceful_shutdown__(null, cb);
         }
     },
+
     sharedMap: function (test) {
        test.expect(23);
 
@@ -445,6 +446,9 @@ module.exports = {
                 },
                 function(cb) {
                     s2.poke('bar', 'helen', true, false, cb);
+                },
+                function(cb) {
+                    setTimeout(function() {cb(null);}, 2000);
                 },
                 function(cb) {
                     var cb1 = function(err, data) {
