@@ -12,7 +12,7 @@
                "nodeId": "default",
                "redis" : {
                    "password" : null,
-                   "host" : "localhost",
+                   "hostname" : "localhost",
                    "port" : 6379
                 },
                 "coalescing" : {
