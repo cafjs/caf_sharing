@@ -2,25 +2,8 @@
     "name" : "ca",
     "components" : [
         {
-            "name": "log"
-        },
-        {
-            "module": "../../index.js#plug_ca",
-            "name": "sharing",
-            "description": "Manages Shared Maps for a CA",
-            "env" : {
-                "maxRetries" : "$._.env.maxRetries",
-                "retryDelay" : "$._.env.retryDelay"
-            },
-            "components" : [
-                {
-                    "module": "../../index.js#proxy",
-                    "name": "proxy",
-                    "description": "Allows access to this CA Shared Maps",
-                    "env" : {
-                    }
-                }
-            ]
+            "name": "security",
+            "module": null
         }
     ]
 }
