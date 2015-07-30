@@ -1,6 +1,7 @@
 "use strict"
 var crypto = require('crypto');
 var SharedMap = require('../index').SharedMap;
+var ReliableChannel = require('../index').ReliableChannel;
 var AggregateMap = require('../index').AggregateMap;
 var hello = require('./hello/main.js');
 var app = hello;
@@ -393,6 +394,80 @@ module.exports = {
 
         });
 
+    },
+    reliableChannel: function(test) {
+        var all = Array.apply(null, Array(10000)).map(function (_, i) {
+            return i;
+        });
+        var fakeMap = function() {
+            var map = {};
+            var that = {};
+            that.get = function(x) {
+                return map[x];
+            };
+            that.set = function(k,v) {
+                map[k] = v;
+            };
+            that.getMap = function() {
+                return map;
+            };
+            return that;
+        };
+        var self = this;
+        test.expect(5);
+
+        var source = fakeMap();
+        var destination = fakeMap();
+        var nSent = 0;
+        var res = [];
+        while (nSent < 10000) {
+            var nEvict = Math.floor(Math.random() * 10) + 1;
+            var toSend = [];
+            for (var i = 0 ; i < nEvict; i++) {
+                if (all.length > 0) {
+                    toSend.push(all.shift());
+                    nSent = nSent + 1;
+                }
+            }
+            var p1 = function() {
+                ReliableChannel.send(source, 'foo', toSend);
+            };
+            var p2 = function() {
+                res = res.concat(ReliableChannel.receive(destination, source,
+                                                         'foo'));
+            };
+            var p3 = function() {
+                ReliableChannel.gc(source, destination);
+            };
+            var shuffle = [[p1,p2, p3], [p1, p3, p2], [p2, p1, p3],
+                           [p2, p3, p1], [p3, p1, p2] , [p3, p2, p1]];
+            var n =  Math.floor(Math.random() * 6);
+            shuffle[n][0].apply(null,[]);
+            shuffle[n][1].apply(null,[]);
+            shuffle[n][2].apply(null,[]);
+        }
+
+        res = res.concat(ReliableChannel.receive(destination, source,
+                                                 'foo'));
+        ReliableChannel.gc(source, destination);
+
+
+        var mapSource = source.getMap();
+        var mapDestination = destination.getMap();
+        var chan = mapSource['__ca_channels__'].foo;
+        test.equals(chan.contents.length, 0);
+        test.equals(chan.index, 10000);
+
+        test.equals(res.length, 10000);
+        var allOK = true;
+        res.forEach(function(x, i) { allOK = (allOK && (x === i));});
+        test.ok(allOK);
+
+        var ackIndex =  mapDestination['__ca_acks__'].foo;
+        test.equals(ackIndex, 9999);
+        console.log(mapSource);
+        console.log(mapDestination);
+        test.done();
     },
     oneAggregate: function(test) {
         var self = this;
