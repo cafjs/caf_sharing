@@ -5,8 +5,7 @@ Co-design permanent, active, stateful, reliable cloud proxies with your web app.
 See http://www.cafjs.com 
 
 ## CAF Lib Sharing
-
-[![Build Status](http://ci.cafjs.com/github.com/cafjs/caf_sharing/status.svg?branch=master)](http://ci.cafjs.com/github.com/cafjs/caf_sharing)
+[![Build Status](http://ci.cafjs.com/api/badges/cafjs/caf_sharing/status.svg)](http://ci.cafjs.com/cafjs/caf_sharing)
 
 
 This repository contains a CAF lib to implement distributed data structures needed by Sharing Actors.
