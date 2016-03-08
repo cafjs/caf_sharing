@@ -414,12 +414,15 @@ module.exports = {
             return that;
         };
         var self = this;
-        test.expect(5);
+        test.expect(6);
 
         var source = fakeMap();
         var destination = fakeMap();
         var nSent = 0;
         var res = [];
+        var lastIndex = -1;
+        var total = 0;
+        var lastNMessages = 0;
         while (nSent < 10000) {
             var nEvict = Math.floor(Math.random() * 10) + 1;
             var toSend = [];
@@ -433,22 +436,35 @@ module.exports = {
                 ReliableChannel.send(source, 'foo', toSend);
             };
             var p2 = function() {
-                res = res.concat(ReliableChannel.receive(destination, source,
-                                                         'foo'));
+                var msgs = ReliableChannel.receive(destination, source, 'foo');
+                if (msgs.messages.length > 0) {
+                    if (msgs.index <= lastIndex) {
+                        test.ok(false, 'Index not monotonic increasing new:' +
+                                msgs.index + ' old: ' + lastIndex);
+                    } else {
+                        total = total + msgs.index - lastIndex;
+                        lastIndex = msgs.index;
+                        lastNMessages = msgs.messages.length;
+                    }
+                }
+                res = res.concat(msgs.messages);
             };
             var p3 = function() {
                 ReliableChannel.gc(source, destination);
             };
-            var shuffle = [[p1,p2, p3], [p1, p3, p2], [p2, p1, p3],
-                           [p2, p3, p1], [p3, p1, p2] , [p3, p2, p1]];
+            var shuffle = [[p1, p2, p3], [p1, p3, p2], [p2, p1, p3],
+                           [p2, p3, p1], [p3, p1, p2], [p3, p2, p1]];
             var n =  Math.floor(Math.random() * 6);
             shuffle[n][0].apply(null,[]);
             shuffle[n][1].apply(null,[]);
             shuffle[n][2].apply(null,[]);
         }
 
-        res = res.concat(ReliableChannel.receive(destination, source,
-                                                 'foo'));
+        total = total + lastNMessages -1 ;
+        test.equals(total, res.length, 'Receiving messages multiple times');
+        
+        var msgs = ReliableChannel.receive(destination, source, 'foo');
+        res = res.concat(msgs.messages);
         ReliableChannel.gc(source, destination);
 
 
