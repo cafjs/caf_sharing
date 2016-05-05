@@ -147,7 +147,7 @@ module.exports = {
         var ref1 = m1.ref();
         ref1.set('y', 7)
             .set('z', 9)
-            .set('x', function(y) { return this.get(y) + 1;});
+            .setFun('x', ['y'], 'return this.get(y) + 1;');
         var d1 = ref1.prepare();
         m1.commit(ref1);
         var ref2 = m2.ref();
@@ -162,7 +162,7 @@ module.exports = {
         test.equals(ref1.applyMethod('x', ['z']), 10);
         test.equals(ref1.applyMethod('x', ['z']), ref2.applyMethod('x', ['z']));
 
-        ref1.set('k', function(y) { return this.applyMethod('x',[y]) + 1;});
+        ref1.setFun('k', ['y'], 'return this.applyMethod("x",[y]) + 1;');
         var d2 = ref1.prepare();
         test.equals(ref1.applyMethod('k', ['y']), 9);
         m1.commit(ref1);
@@ -284,10 +284,8 @@ module.exports = {
                         }, 1000);
                     },
                     function(cb) {
-                        var f = function(x) {
-                            return this.get('somekey') + x;
-                        };
-                        s1.poke('foo', 'f', f.toString(), true, cb);
+                        var fun = {args:['x'], body: "return this.get('somekey') + x;"};
+                        s1.poke('foo', 'f', fun, true, cb);
                     },
                     function(cb) {
                         var cb1 = function(err, val) {
@@ -462,7 +460,7 @@ module.exports = {
 
         total = total + lastNMessages -1 ;
         test.equals(total, res.length, 'Receiving messages multiple times');
-        
+
         var msgs = ReliableChannel.receive(destination, source, 'foo');
         res = res.concat(msgs.messages);
         ReliableChannel.gc(source, destination);
