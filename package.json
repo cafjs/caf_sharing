@@ -1,7 +1,7 @@
 {
     "name": "caf_sharing",
     "description": "Cloud Assistants lib for efficient sharing of data and code among CAs using the Sharing Actors paradigm",
-    "version": "0.2.18",
+    "version": "0.2.19",
     "author": "Antonio Lain <antlai@cafjs.com>",
     "dependencies": {
         "caf_components" : "^0.2.0",
@@ -9,6 +9,7 @@
         "immutable" : "^3.7.2"
     },
     "devDependencies": {
+        "eslint": "^3.1.1",
         "nodeunit" : ">=0.9",
         "caf_platform" : "^0.2.0",
 	"caf_ca" : "^0.2.0",
@@ -24,7 +25,9 @@
         "url": "https://github.com/cafjs/caf_sharing.git"
     },
     "scripts": {
-        "test": "node ./node_modules/.bin/nodeunit"
+        "test": "node ./node_modules/.bin/nodeunit",
+        "eslint" : "./node_modules/.bin/eslint .",
+        "eslintfix" : "./node_modules/.bin/eslint --fix ."
     },
     "engines": { "node": ">= 0.10.29 " }
 }
