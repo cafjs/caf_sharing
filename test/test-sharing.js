@@ -55,7 +55,7 @@ module.exports = {
     },
 
     sharedMap: function (test) {
-       test.expect(23);
+       test.expect(25);
 
         // test isolation
         var m1 = new SharedMap();
@@ -99,6 +99,24 @@ module.exports = {
         test['throws'](function() {m1.commit(ref1);});
         ref1 = m1.ref();
         test.ok(!ref1.has('yy'));
+
+        // test dump with reset
+        var sm1 = new SharedMap();
+        var sm2 = new SharedMap();
+        ref1 = sm1.ref();
+        ref2 = sm2.ref();
+        ref1.set('x', 3);
+        ref2.set('x', 5);
+        ref1.prepare();
+        sm1.commit(ref1);
+        ref2.prepare();
+        sm2.commit(ref2);
+        ref1 = sm1.ref();
+        var dump1 = ref1.dump();
+        sm2.applyChanges(dump1);
+        ref2 = sm2.ref();
+        test.equals(ref2.get('x'), 3);
+        test.equals(ref2.getVersion(), 1);
 
         // test deltas
         var m2 = new SharedMap();
