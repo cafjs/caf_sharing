@@ -5,10 +5,11 @@ var ReliableChannel = require('../index').ReliableChannel;
 var AggregateMap = require('../index').AggregateMap;
 var hello = require('./hello/main.js');
 var app = hello;
-var caf_comp = require('caf_components');
+var caf = require('caf_core');
+var caf_comp = caf.caf_components;
 var myUtils = caf_comp.myUtils;
 var async = caf_comp.async;
-var cli = require('caf_cli');
+var cli = caf.caf_cli;
 
 var CA_OWNER_1='other1';
 var CA_LOCAL_NAME_1='bar1';
