@@ -61,11 +61,11 @@ var ADMIN_CA = 'admin';
 var ADMIN_MAP = 'masterSharedMap';
 var isAdmin = function(self) {
     var name = self.__ca_getName__();
-    return (json_rpc.splitName(name)[1] === ADMIN_CA);
+    return (caf.splitName(name)[1] === ADMIN_CA);
 };
 var masterMap = function(self) {
     var name = self.__ca_getName__();
-    return json_rpc.joinName(json_rpc.splitName(name)[0], ADMIN_CA, ADMIN_MAP);
+    return caf.joinName(caf.splitName(name)[0], ADMIN_CA, ADMIN_MAP);
 };
 ```
 
