@@ -73,26 +73,26 @@ and the CA methods that implement a counter as a *SharedMap* entry:
 
 ```
 exports.methods = {
-    __ca_init__: function(cb) {
+    async __ca_init__() {
         if (isAdmin(this)) {
             this.$.sharing.addWritableMap('master', ADMIN_MAP);
         }
         this.$.sharing.addReadOnlyMap('slave', masterMap(this));
-        cb(null);
+        return [];
     },
-    increment: function(cb) {
+    async increment() {
         var $$ = this.$.sharing.$;
         if (isAdmin(this)) {
             var counter = $$.master.get('counter') || 0;
             $$.master.set('counter', counter + 1);
-            cb(null, counter);
+            return [null, counter];
         } else {
-            cb(new Error('Cannot write to SharedMap'));
+            return [new Error('Cannot write to SharedMap')];
         }
     },
-    getCounter: function(cb) {
+    async getCounter() {
         var $$ = this.$.sharing.$;
-        cb(null, $$.slave.get('counter'));
+        return [null, $$.slave.get('counter')];
     }
 };
 ```
@@ -107,23 +107,23 @@ The privileged CA installs in the *SharedMap* a serialized method that computes 
 ```
 exports.methods = {
     ...
-    install: function(base, cb) {
+    async install(base) {
         var $$ = this.$.sharing.$;
         if (isAdmin(this)) {
             $$.master.set('base', base);
             var body = "return prefix + (this.get('base') + Math.random());";
             $$.master.setFun('computeLabel', ['prefix'], body);
-            cb(null, base);
+            return [null, base];
         } else {
-            cb(new Error('Cannot write to SharedMap'));
+            return [new Error('Cannot write to SharedMap')];
         }
     },
-    getLabel: function(prefix, cb) {
+    async getLabel(prefix) {
         var $$ = this.$.sharing.$;
         try {
-            cb(null, $$.slave.applyMethod('computeLabel', [prefix]));
+            return [null, $$.slave.applyMethod('computeLabel', [prefix])];
         } catch (err) {
-            cb(err);
+            return [err];
         }
     }
 };

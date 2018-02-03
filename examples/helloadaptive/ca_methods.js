@@ -17,30 +17,30 @@ var masterMap = function(self) {
 };
 
 exports.methods = {
-    __ca_init__: function(cb) {
+    async __ca_init__() {
         if (isAdmin(this)) {
             this.$.sharing.addWritableMap('master', ADMIN_MAP);
         }
         this.$.sharing.addReadOnlyMap('slave', masterMap(this));
-        cb(null);
+        return [];
     },
-    install: function(base, cb) {
+    async install(base) {
         var $$ = this.$.sharing.$;
         if (isAdmin(this)) {
             $$.master.set('base', base);
             var body = "return prefix + (this.get('base') + Math.random());";
             $$.master.setFun('computeLabel', ['prefix'], body);
-            cb(null, base);
+            return [null, base];
         } else {
-            cb(new Error('Cannot write to SharedMap'));
+            return [new Error('Cannot write to SharedMap')];
         }
     },
-    getLabel: function(prefix, cb) {
+    async getLabel(prefix) {
         var $$ = this.$.sharing.$;
         try {
-            cb(null, $$.slave.applyMethod('computeLabel', [prefix]));
+            return [null, $$.slave.applyMethod('computeLabel', [prefix])];
         } catch (err) {
-            cb(err);
+            return [err];
         }
     }
 };

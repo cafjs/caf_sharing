@@ -3,7 +3,6 @@
 
 var caf_core = require('caf_core');
 var caf_comp = caf_core.caf_components;
-var async = caf_comp.async;
 var myUtils = caf_comp.myUtils;
 var caf_cli = caf_core.caf_cli;
 
@@ -17,19 +16,14 @@ var URL = 'http://root-hellosharing.vcap.me:3000/#from=foo-admin&ca=foo-admin';
 
 var s = new caf_cli.Session(URL);
 
-s.onopen = function() {
-    async.waterfall([
-        function(cb) {
-            s.install(42, cb);
-        }
-    ], function(err, base) {
-        if (err) {
-            console.log(myUtils.errToPrettyStr(err));
-        } else {
-            console.log('Base:' + base);
-            s.close();
-        }
-    });
+s.onopen = async function() {
+    try {
+        var base = await s.install(42).getPromise();
+        console.log('Base:' + base);
+        s.close();
+    } catch (err) {
+        s.close(err);
+    }
 };
 
 s.onclose = function(err) {

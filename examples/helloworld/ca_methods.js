@@ -17,27 +17,27 @@ var masterMap = function(self) {
 };
 
 exports.methods = {
-    __ca_init__: function(cb) {
+    async __ca_init__() {
         if (isAdmin(this)) {
             this.$.sharing.addWritableMap('master', ADMIN_MAP);
         }
         this.$.sharing.addReadOnlyMap('slave', masterMap(this));
-        cb(null);
+        return [];
     },
-    increment: function(cb) {
+    async increment() {
         var $$ = this.$.sharing.$;
         if (isAdmin(this)) {
             var counter = $$.master.get('counter') || 0;
             $$.master.set('counter', counter + 1);
-            cb(null, counter);
+            return [null, counter];
         } else {
-            cb(new Error('Cannot write to SharedMap'));
+            return [new Error('Cannot write to SharedMap')];
         }
     },
-    getCounter: function(cb) {
+    async getCounter() {
         var $$ = this.$.sharing.$;
         var value = $$.slave.get('counter');
-        cb(null, value);
+        return [null, value];
     }
 };
 
