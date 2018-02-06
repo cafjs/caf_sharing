@@ -1,7 +1,7 @@
 {
     "name": "caf_sharing",
     "description": "Cloud Assistants lib for efficient sharing of data and code among CAs using the Sharing Actors paradigm",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "author": "Antonio Lain <antlai@cafjs.com>",
     "dependencies": {
         "caf_components" : "^0.3.0",
@@ -12,6 +12,9 @@
         "eslint": "^3.1.1",
         "nodeunit" : ">=0.9",
         "caf_core" : "^0.3.0",
+        "typescript": "^2.7.1",
+        "@types/node": "^9.4.0",
+        "@types/immutable": "^3.8.7",
         "jsdoc": "^3.4.2"
     },
    "browser": {
@@ -27,7 +30,8 @@
         "test": "node ./node_modules/.bin/nodeunit",
         "eslint" : "./node_modules/.bin/eslint .",
         "eslintfix" : "./node_modules/.bin/eslint --fix .",
-        "docs" : "rm -fr docs; mkdir -p docs; ./node_modules/.bin/jsdoc --pedantic -c ./conf.json -d docs lib/*.js --readme ./README.md --package ./package.json"
+        "docs" : "rm -fr docs; mkdir -p docs; ./node_modules/.bin/jsdoc --pedantic -c ./conf.json -d docs lib/*.js --readme ./README.md --package ./package.json",
+        "checktype" : "./node_modules/.bin/tsc"
     },
     "engines": { "node": ">= 0.10.29 " }
 }
