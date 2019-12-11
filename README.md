@@ -59,12 +59,12 @@ Helper functions to identify the privileged CA, and the name of the *SharedMap*:
 
 ```
 var ADMIN_CA = 'admin';
-var ADMIN_MAP = 'masterSharedMap';
+var ADMIN_MAP = 'primarySharedMap';
 var isAdmin = function(self) {
     var name = self.__ca_getName__();
     return (caf.splitName(name)[1] === ADMIN_CA);
 };
-var masterMap = function(self) {
+var primaryMap = function(self) {
     var name = self.__ca_getName__();
     return caf.joinName(caf.splitName(name)[0], ADMIN_CA, ADMIN_MAP);
 };
@@ -76,16 +76,16 @@ and the CA methods that implement a counter as a *SharedMap* entry:
 exports.methods = {
     async __ca_init__() {
         if (isAdmin(this)) {
-            this.$.sharing.addWritableMap('master', ADMIN_MAP);
+            this.$.sharing.addWritableMap('primary', ADMIN_MAP);
         }
-        this.$.sharing.addReadOnlyMap('slave', masterMap(this));
+        this.$.sharing.addReadOnlyMap('replica', primaryMap(this));
         return [];
     },
     async increment() {
         var $$ = this.$.sharing.$;
         if (isAdmin(this)) {
-            var counter = $$.master.get('counter') || 0;
-            $$.master.set('counter', counter + 1);
+            var counter = $$.primary.get('counter') || 0;
+            $$.primary.set('counter', counter + 1);
             return [null, counter];
         } else {
             return [new Error('Cannot write to SharedMap')];
@@ -93,7 +93,7 @@ exports.methods = {
     },
     async getCounter() {
         var $$ = this.$.sharing.$;
-        return [null, $$.slave.get('counter')];
+        return [null, $$.replica.get('counter')];
     }
 };
 ```
@@ -111,9 +111,9 @@ exports.methods = {
     async install(base) {
         var $$ = this.$.sharing.$;
         if (isAdmin(this)) {
-            $$.master.set('base', base);
+            $$.primary.set('base', base);
             var body = "return prefix + (this.get('base') + Math.random());";
-            $$.master.setFun('computeLabel', ['prefix'], body);
+            $$.primary.setFun('computeLabel', ['prefix'], body);
             return [null, base];
         } else {
             return [new Error('Cannot write to SharedMap')];
@@ -122,7 +122,7 @@ exports.methods = {
     async getLabel(prefix) {
         var $$ = this.$.sharing.$;
         try {
-            return [null, $$.slave.applyMethod('computeLabel', [prefix])];
+            return [null, $$.replica.applyMethod('computeLabel', [prefix])];
         } catch (err) {
             return [err];
         }

@@ -3,7 +3,7 @@
 var caf = require('caf_core');
 
 var ADMIN_CA = 'admin';
-var ADMIN_MAP = 'masterSharedMap';
+var ADMIN_MAP = 'primarySharedMap';
 
 
 var isAdmin = function(self) {
@@ -11,7 +11,7 @@ var isAdmin = function(self) {
     return (caf.splitName(name)[1] === ADMIN_CA);
 };
 
-var masterMap = function(self) {
+var primaryMap = function(self) {
     var name = self.__ca_getName__();
     return caf.joinName(caf.splitName(name)[0], ADMIN_CA, ADMIN_MAP);
 };
@@ -19,16 +19,16 @@ var masterMap = function(self) {
 exports.methods = {
     async __ca_init__() {
         if (isAdmin(this)) {
-            this.$.sharing.addWritableMap('master', ADMIN_MAP);
+            this.$.sharing.addWritableMap('primary', ADMIN_MAP);
         }
-        this.$.sharing.addReadOnlyMap('slave', masterMap(this));
+        this.$.sharing.addReadOnlyMap('replica', primaryMap(this));
         return [];
     },
     async increment() {
         var $$ = this.$.sharing.$;
         if (isAdmin(this)) {
-            var counter = $$.master.get('counter') || 0;
-            $$.master.set('counter', counter + 1);
+            var counter = $$.primary.get('counter') || 0;
+            $$.primary.set('counter', counter + 1);
             return [null, counter];
         } else {
             return [new Error('Cannot write to SharedMap')];
@@ -36,7 +36,7 @@ exports.methods = {
     },
     async getCounter() {
         var $$ = this.$.sharing.$;
-        var value = $$.slave.get('counter');
+        var value = $$.replica.get('counter');
         return [null, value];
     }
 };

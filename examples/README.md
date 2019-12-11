@@ -14,7 +14,7 @@ and then, for example,  in the `examples/helloworld` directory:
 
 to start the server at port 3000, and
 
-    node clientMaster.js
-    node clientSlave.js
+    node clientPrimary.js
+    node clientReplica.js
 
 to run the client code.
