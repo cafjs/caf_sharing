@@ -19,7 +19,7 @@ var s = new caf_cli.Session(URL);
 
 s.onopen = async function() {
     try {
-        //   Uncomment and it throws a write error: replica SharedMap is read-only
+        // Uncomment and it throws a write error: replica SharedMap is read-only
         //
         //       var counter = await s.increment().getPromise();
         //        console.log(counter);
