@@ -35,7 +35,7 @@ s.onopen = async function() {
                 setTimeoutPromise(100);
             }
         }
-//        console.log('Final count:' + counter);
+        //        console.log('Final count:' + counter);
         s.close();
     } catch (err) {
         s.close(err);
