@@ -1,18 +1,18 @@
 'use strict';
 
-var caf = require('caf_core');
+const caf = require('caf_core');
 
-var ADMIN_CA = 'admin';
-var ADMIN_MAP = 'primarySharedMap';
+const ADMIN_CA = 'admin';
+const ADMIN_MAP = 'primarySharedMap';
 
 
-var isAdmin = function(self) {
-    var name = self.__ca_getName__();
+const isAdmin = function(self) {
+    const name = self.__ca_getName__();
     return (caf.splitName(name)[1] === ADMIN_CA);
 };
 
-var primaryMap = function(self) {
-    var name = self.__ca_getName__();
+const primaryMap = function(self) {
+    const name = self.__ca_getName__();
     return caf.joinName(caf.splitName(name)[0], ADMIN_CA, ADMIN_MAP);
 };
 
@@ -25,10 +25,10 @@ exports.methods = {
         return [];
     },
     async install(base) {
-        var $$ = this.$.sharing.$;
+        const $$ = this.$.sharing.$;
         if (isAdmin(this)) {
             $$.primary.set('base', base);
-            var body = "return prefix + (this.get('base') + Math.random());";
+            const body = "return prefix + (this.get('base') + Math.random());";
             $$.primary.setFun('computeLabel', ['prefix'], body);
             return [null, base];
         } else {
@@ -36,7 +36,7 @@ exports.methods = {
         }
     },
     async getLabel(prefix) {
-        var $$ = this.$.sharing.$;
+        const $$ = this.$.sharing.$;
         try {
             return [null, $$.replica.applyMethod('computeLabel', [prefix])];
         } catch (err) {

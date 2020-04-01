@@ -1,12 +1,12 @@
 'use strict';
 /* eslint-disable  no-console */
 
-var caf_core = require('caf_core');
-var caf_comp = caf_core.caf_components;
-var myUtils = caf_comp.myUtils;
-var caf_cli = caf_core.caf_cli;
-var util = require('util');
-var setTimeoutPromise = util.promisify(setTimeout);
+const caf_core = require('caf_core');
+const caf_comp = caf_core.caf_components;
+const myUtils = caf_comp.myUtils;
+const caf_cli = caf_core.caf_cli;
+const util = require('util');
+const setTimeoutPromise = util.promisify(setTimeout);
 
 /* `from` CA needs to be the same as target `ca` to enable creation, i.e.,
  *  only owners can create CAs.
@@ -14,16 +14,16 @@ var setTimeoutPromise = util.promisify(setTimeout);
  *  With security on, we would need a token to authenticate `from`.
  *
  */
-var URL = 'http://root-hellosharing.vcap.me:3000/#from=foo-admin&ca=foo-admin';
+const URL = 'http://root-hellosharing.vcap.me:3000/#from=foo-admin&ca=foo-admin';
 
-var s = new caf_cli.Session(URL);
+const s = new caf_cli.Session(URL);
 
 s.onopen = async function() {
-    var counter = await s.increment().getPromise();
+    let counter = await s.increment().getPromise();
     console.log(counter);
     counter = await s.increment().getPromise();
     console.log(counter);
-    var done = false;
+    let done = false;
     try {
         while (!done) {
             counter = await s.getCounter().getPromise();

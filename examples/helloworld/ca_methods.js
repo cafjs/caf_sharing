@@ -1,18 +1,18 @@
 'use strict';
 
-var caf = require('caf_core');
+const caf = require('caf_core');
 
-var ADMIN_CA = 'admin';
-var ADMIN_MAP = 'primarySharedMap';
+const ADMIN_CA = 'admin';
+const ADMIN_MAP = 'primarySharedMap';
 
 
-var isAdmin = function(self) {
-    var name = self.__ca_getName__();
+const isAdmin = function(self) {
+    const name = self.__ca_getName__();
     return (caf.splitName(name)[1] === ADMIN_CA);
 };
 
-var primaryMap = function(self) {
-    var name = self.__ca_getName__();
+const primaryMap = function(self) {
+    const name = self.__ca_getName__();
     return caf.joinName(caf.splitName(name)[0], ADMIN_CA, ADMIN_MAP);
 };
 
@@ -25,9 +25,9 @@ exports.methods = {
         return [];
     },
     async increment() {
-        var $$ = this.$.sharing.$;
+        const $$ = this.$.sharing.$;
         if (isAdmin(this)) {
-            var counter = $$.primary.get('counter') || 0;
+            const counter = $$.primary.get('counter') || 0;
             $$.primary.set('counter', counter + 1);
             return [null, counter];
         } else {
@@ -35,8 +35,8 @@ exports.methods = {
         }
     },
     async getCounter() {
-        var $$ = this.$.sharing.$;
-        var value = $$.replica.get('counter');
+        const $$ = this.$.sharing.$;
+        const value = $$.replica.get('counter');
         return [null, value];
     }
 };

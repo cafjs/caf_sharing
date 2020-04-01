@@ -1,10 +1,10 @@
 'use strict';
 /* eslint-disable  no-console */
 
-var caf_core = require('caf_core');
-var caf_comp = caf_core.caf_components;
-var myUtils = caf_comp.myUtils;
-var caf_cli = caf_core.caf_cli;
+const caf_core = require('caf_core');
+const caf_comp = caf_core.caf_components;
+const myUtils = caf_comp.myUtils;
+const caf_cli = caf_core.caf_cli;
 
 /* `from` CA needs to be the same as target `ca` to enable creation, i.e.,
  *  only owners can create CAs.
@@ -12,13 +12,13 @@ var caf_cli = caf_core.caf_cli;
  *  With security on, we would need a token to authenticate `from`.
  *
  */
-var URL = 'http://root-hellosharing.vcap.me:3000/#from=foo-admin&ca=foo-admin';
+const URL = 'http://root-hellosharing.vcap.me:3000/#from=foo-admin&ca=foo-admin';
 
-var s = new caf_cli.Session(URL);
+const s = new caf_cli.Session(URL);
 
 s.onopen = async function() {
     try {
-        var base = await s.install(42).getPromise();
+        const base = await s.install(42).getPromise();
         console.log('Base:' + base);
         s.close();
     } catch (err) {
