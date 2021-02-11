@@ -16,7 +16,8 @@
         "typescript": "3.7.3",
         "@types/node": "12.12.31",
         "@types/immutable": "^3.8.7",
-        "jsdoc": "^3.4.2"
+        "jsdoc": "^3.4.2",
+        "docdash": "^1.2.0"
     },
    "browser": {
         "./lib/main.js": "./lib/main-shim.js"
