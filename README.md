@@ -1,6 +1,6 @@
 # Caf.js
 
-Co-design permanent, active, stateful, reliable cloud proxies with your web app and gadgets.
+Co-design cloud assistants with your web app and IoT devices.
 
 See https://www.cafjs.com
 
@@ -42,9 +42,9 @@ Monotonic read consistency is enforced by using version numbers to identify chan
 
 The tricky part is how to guarantee both *Fairness* and *Readers Isolation* at the same time, since they impose conflicting requirements. The solution is to have multiple local versions of a *SharedMap*, and pick the most recent one when processing a new message.  When all the CAs using an old version finish processing its current message, that version gets garbage collected.
 
-*SharedMaps* are implemented with persistent data structures, i.e., `Immutable.js`, to efficiently maintain many read-only snapshots. Since *SharedMaps* can be easily replicated in the browser (or gadgets), these persistent data structures are also used by *React/Redux* to speed up user interfaces.
+*SharedMaps* are implemented with persistent data structures, i.e., `Immutable.js`, to efficiently maintain many read-only snapshots. Since *SharedMaps* can be easily replicated in the browser (and IoT devices.), these persistent data structures are also used by *React/Redux* to speed up user interfaces.
 
-*SharedMaps* can contain serialized methods that `Caf.js` uses to dynamically change the behavior of CAs or gadgets. For example, we can hide schema changes by adding getters and setters, or provide new functionality to a device, or change the rules on how CAs react to certain events...
+*SharedMaps* can contain serialized methods that `Caf.js` uses to dynamically change the behavior of CAs and IoT devices.. For example, we can hide schema changes by adding getters and setters, or provide new functionality to a device, or change the rules on how CAs react to certain events...
 
 And those changes respect  *Single Writer*, *Writer Atomicity*,  *Readers Isolation*, *Fairness*, and *Consistency*, enabling **safe** adaptive behavior.
 
