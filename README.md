@@ -5,7 +5,9 @@ Co-design cloud assistants with your web app and IoT devices.
 See https://www.cafjs.com
 
 ## Library for Implementing Sharing Actors
-[![Build Status](https://travis-ci.org/cafjs/caf_sharing.svg?branch=master)](https://travis-ci.org/cafjs/caf_sharing)
+
+[![Build Status](https://github.com/cafjs/caf_sharing/actions/workflows/push.yml/badge.svg)](https://github.com/cafjs/caf_sharing/actions/workflows/push.yml)
+
 
 
 This repository implements distributed, replicated data structures for *Sharing Actors*, a core abstraction for our CAs.
