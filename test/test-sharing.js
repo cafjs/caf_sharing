@@ -250,7 +250,7 @@ module.exports = {
         async.series(
             [
                 function(cb) {
-                    s1 = new cli.Session('ws://foo-xx.vcap.me:3000', from1, {
+                    s1 = new cli.Session('ws://foo-xx.localtest.me:3000', from1, {
                         from : from1
                     });
                     s1.onopen = function() {
@@ -258,7 +258,7 @@ module.exports = {
                     };
                 },
                 function(cb) {
-                    s2 = new cli.Session('ws://foo-xx.vcap.me:3000', from2, {
+                    s2 = new cli.Session('ws://foo-xx.localtest.me:3000', from2, {
                         from : from2
                     });
                     s2.onopen = function() {
@@ -266,7 +266,7 @@ module.exports = {
                     };
                 },
                 function(cb) {
-                    s3 = new cli.Session('ws://foo-xx.vcap.me:3000', from3, {
+                    s3 = new cli.Session('ws://foo-xx.localtest.me:3000', from3, {
                         from : from3
                     });
                     s3.onopen = function() {
@@ -522,7 +522,7 @@ module.exports = {
         async.series(
             [
                 function(cb) {
-                    s1 = new cli.Session('ws://foo-xx.vcap.me:3000', from1, {
+                    s1 = new cli.Session('ws://foo-xx.localtest.me:3000', from1, {
                         from : from1
                     });
                     s1.onopen = function() {
@@ -530,7 +530,7 @@ module.exports = {
                     };
                 },
                 function(cb) {
-                    s2 = new cli.Session('ws://foo-xx.vcap.me:3000', from2, {
+                    s2 = new cli.Session('ws://foo-xx.localtest.me:3000', from2, {
                         from : from2
                     });
                     s2.onopen = function() {
@@ -538,7 +538,7 @@ module.exports = {
                     };
                 },
                 function(cb) {
-                    s3 = new cli.Session('ws://foo-xx.vcap.me:3000', from1, {
+                    s3 = new cli.Session('ws://foo-xx.localtest.me:3000', from1, {
                         from : from1
                     });
                     s3.onopen = function() {

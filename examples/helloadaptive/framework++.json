@@ -3,7 +3,7 @@
     "env" : {
         "appPublisher" :"root",
         "appLocalName" : "helloadaptive",
-        "appSuffix" : "vcap.me"
+        "appSuffix" : "localtest.me"
     },
     "components": [
         {
